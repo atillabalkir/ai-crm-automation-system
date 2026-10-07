@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AI CRM Automation System</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>AI CRM Automation System</h1>
+      <p>Lead scoring, AI reply drafts, webhook automation and CRM tracking.</p>
+    </div>
+    <a href="/docs" target="_blank">API Docs</a>
+  </header>
+
+  <section class="stats">
+    <div><strong>{{ stats['total'] or 0 }}</strong><span>Total Leads</span></div>
+    <div><strong>{{ stats['avg_score'] or 0 }}</strong><span>Avg. Score</span></div>
+    <div><strong>{{ stats['high_count'] or 0 }}</strong><span>High Priority</span></div>
+  </section>
+
+  <section class="panel">
+    <h2>Yeni Lead Ekle</h2>
+    <form action="/web-lead" method="post" class="grid">
+      <input name="name" placeholder="Ad Soyad" required>
+      <input name="email" placeholder="E-posta">
+      <input name="phone" placeholder="Telefon">
+      <input name="company" placeholder="Şirket">
+      <textarea name="message" placeholder="Talep / mesaj" required></textarea>
+      <button type="submit">Analiz Et ve Kaydet</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Son Leadler</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Lead</th><th>Şirket</th><th>Skor</th><th>Öncelik</th><th>Durum</th><th>AI Özeti</th></tr></thead>
+        <tbody>
+        {% for lead in leads %}
+          <tr>
+            <td>#{{ lead['id'] }}</td>
+            <td><b>{{ lead['name'] }}</b><br><small>{{ lead['email'] or '' }}</small></td>
+            <td>{{ lead['company'] or '-' }}</td>
+            <td><span class="score">{{ lead['score'] }}</span></td>
+            <td><span class="badge {{ lead['priority'] }}">{{ lead['priority'] }}</span></td>
+            <td>{{ lead['status'] }}</td>
+            <td>{{ lead['summary'] }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="7">Henüz lead yok.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+</body>
+</html>

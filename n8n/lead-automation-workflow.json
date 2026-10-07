@@ -1,0 +1,43 @@
+{
+  "name": "AI CRM Lead Automation",
+  "nodes": [
+    {
+      "parameters": {"httpMethod": "POST", "path": "crm-lead", "responseMode": "onReceived"},
+      "id": "webhook-node",
+      "name": "Incoming Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/api/leads",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json.body || $json) }}"
+      },
+      "id": "api-node",
+      "name": "Send to CRM API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {"conditions": {"number": [{"value1": "={{$json.score}}", "operation": "largerEqual", "value2": 75}]}},
+      "id": "if-node",
+      "name": "High Priority?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [760, 300]
+    }
+  ],
+  "connections": {
+    "Incoming Lead Webhook": {"main": [[{"node": "Send to CRM API", "type": "main", "index": 0}]]},
+    "Send to CRM API": {"main": [[{"node": "High Priority?", "type": "main", "index": 0}]]}
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "portfolio-demo"
+}
